@@ -72,28 +72,15 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let target =  this.$refs.target
-      if(this.fontsize !== undefined){
-        console.log('font-size')
-        target.querySelector('.data-item').style.setProperty('font-size',`${this.fontsize}px`)
-        target.querySelector('.data-item.selected-data').style.setProperty('font-size',`${this.fontsize + 2}px`)
+      //根据配置修改样式
+      if(this.lineHeight !== undefined){ //初始化偏移量
+        let target =  this.$refs.target
+        this.setStyles(target,'.province-data','transform',`translateY(${2 * this.lineHeight}px)`)
+        this.setStyles(target,'.city-data','transform',`translateY(${2 * this.lineHeight}px)`)
+        this.setStyles(target,'.district-data','transform',`translateY(${2 * this.lineHeight}px)`)
       }
 
-      if(this.activeColor !== undefined){
-        console.log('active-color')
-        target.querySelector('.selected-data').style.setProperty('color',this.activeColor)
-      }
-
-      if(this.lineHeight !== undefined){
-        console.log('line-height')
-        console.log(target.querySelector('.select-data-area').querySelector('::before'))
-        target.style.setProperty('height',`${this.lineHeight * 6}px`)
-        target.querySelector('.select-buttons').style.setProperty('height',`${this.lineHeight}px`)
-        target.querySelector('.select-buttons').style.setProperty('line-height',`${this.lineHeight}px`)
-        target.querySelector('.select-data-area').style.setProperty('height',`${this.lineHeight * 5}px`)
-        target.querySelector('.data-item').style.setProperty('height',`${this.lineHeight}px`)
-        target.querySelector('.data-item').style.setProperty('line-height',`${this.lineHeight}px`)
-      }
+      this.changeStyle()
     })
   },
   watch: { // 监听省、市变化 重置市，区
@@ -103,6 +90,7 @@ export default {
         document.querySelector('.city-data').style.setProperty('transform', `translateY(${2 * this.itemHeight}px)`)
         this.$set(this.currentItem, 'district', 0)
         document.querySelector('.district-data').style.setProperty('transform', `translateY(${2 * this.itemHeight}px)`)
+        this.changeStyle()
       },
       deep: true
     },
@@ -110,6 +98,7 @@ export default {
       handler: function (value, oldValue) {
         this.$set(this.currentItem, 'district', 0)
         document.querySelector('.district-data').style.setProperty('transform', `translateY(${2 * this.itemHeight}px)`)
+        this.changeStyle()
       },
       deep: true
     }
@@ -168,6 +157,7 @@ export default {
       if ((scrollY < 2.5 * this.itemHeight) && (scrollY > -(this.targetHeight - 2.5 * this.itemHeight))) {
         this.scrollTarget.style.setProperty('transform', `translateY(${scrollY}px)`)
         this.currentItem[who] = Math.round((2 * this.itemHeight - scrollY) / this.itemHeight)
+        this.changeStyle()
       }
       this.tempY = currentY // 重置参照坐标
     },
@@ -181,6 +171,7 @@ export default {
         scrollY = (-offset >= this.itemHeight * 0.5) ? (currentTranslateY - this.itemHeight - offset) : (currentTranslateY - offset)
       }
       this.scrollTarget.style.setProperty('transform', `translateY(${scrollY}px)`)
+      this.changeStyle()
     },
     sureSelect () {
       this.$emit('selectdone', { // 传递地址信息及坐标
@@ -191,6 +182,27 @@ export default {
       })
       console.log('scrollselect.vue return location data')
       this.fade()
+    },
+    changeStyle () {
+      let target =  this.$refs.target
+      if(this.fontsize !== undefined){
+        this.setStyles(target,'.data-item','font-size',`${this.fontsize}px`)
+        this.setStyles(target,'.data-item.selected-data','font-size',`${this.fontsize + 2}px`)
+      }
+
+      if(this.activeColor !== undefined){
+        this.setStyles(target,'.data-item','color',`#000000`)
+        this.setStyles(target,'.data-item.selected-data','color',this.activeColor)
+      }
+
+      if(this.lineHeight !== undefined){
+        target.style.setProperty('height',`${this.lineHeight * 6}px`)
+        this.setStyles(target,'.select-buttons','height',`${this.lineHeight}px`)
+        this.setStyles(target,'.select-buttons','line-height',`${this.lineHeight}px`)
+        this.setStyles(target,'.select-data-area','height',`${this.lineHeight * 5}px`)
+        this.setStyles(target,'.data-item','height',`${this.lineHeight}px`)
+        this.setStyles(target,'.data-item','line-height',`${this.lineHeight}px`)
+      }
     },
     getTranslateValue (which, transform) { // z:matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1.2, 1)   x y :matrix(1, 0, 0, 1, 1.2, 0)
       let temp = which === 'z' ? transform.slice(9, -1).split(',') : transform.slice(7, -1).split(',')
@@ -208,6 +220,11 @@ export default {
         default:
       }
       return window.parseFloat(temp[index])
+    },
+    setStyles (target,className,property,value) {
+      [...target.querySelectorAll(className)].forEach(function(element,index){
+        element.style.setProperty(property,value)
+      })
     }
   }
 }

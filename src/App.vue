@@ -3,7 +3,7 @@
     <button @click="showAreaSelect">点我</button>
     <vue-area-select :isShow="isShow"
                      :font-size="size"
-                     active-color="red"
+                     active-color="green"
                      :line-height="height"
                      @fade="toggle"
                      @selectdone="alertData"></vue-area-select>
@@ -16,8 +16,8 @@ export default {
   data () {
     return {
       isShow : false,
-      size:15,
-      height:28
+      size:18,
+      height:36
     }
   },
   methods: {
