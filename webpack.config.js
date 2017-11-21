@@ -2,16 +2,16 @@ var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
-  // entry: './src/main.js',
-  entry: './src/index.js', //打包 插件入口
+  entry: './src/main.js',
+  // entry: './src/index.js', //打包 插件入口
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    // filename: 'build.js'
-    filename: 'vue-area-select-lei.js',
-    library:'AreaSelect',
-    libraryTarget:'umd',
-    umdNamedDefine:true
+    filename: 'build.js'
+    // filename: 'vue-area-select-lei.js',
+    // library:'AreaSelect',   reqire的名字
+    // libraryTarget:'umd',
+    // umdNamedDefine:true
   },
   module: {
     rules: [
